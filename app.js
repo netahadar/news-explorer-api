@@ -3,14 +3,14 @@ const helmet = require('helmet');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-// const { errors, celebrate, Joi } = require('celebrate');
-// const cards = require('./routes/cards');
-// const users = require('./routes/users');
-// const { login, createUser } = require('./controllers/users');
-// const auth = require('./middlewares/auth');
-// const { errorHandler } = require('./middlewares/errorHandler');
+const { errors, celebrate, Joi } = require('celebrate');
+const article = require('./routes/article');
+const user = require('./routes/user');
+const { login, createUser } = require('./controllers/user');
+const auth = require('./middlewares/auth');
+const { errorHandler } = require('./middlewares/errorHandler');
 // const { requestLogger, errorLogger } = require('./middlewares/logger');
-// const NotFoundError = require('./errors/notFoundError');
+const NotFoundError = require('./errors/notFoundError');
 require('dotenv').config();
 
 const app = express();
@@ -26,47 +26,40 @@ app.use(cors());
 app.options('*', cors());
 
 // app.use(requestLogger);
-// // Celebrate error handler
-// app.use(errors());
+// Celebrate error handler
+app.use(errors());
 
-// // Test server crash
-// app.get('/crash-test', () => {
-//   setTimeout(() => {
-//     throw new Error('Server will crash now');
-//   }, 0);
-// });
+app.post(
+  '/signin',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required().min(8),
+    }),
+  }),
+  login,
+);
+app.post(
+  '/signup',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required().min(8),
+    }),
+  }),
+  createUser,
+);
+app.use('/', auth, user);
+app.use('/', auth, article);
 
-// app.post(
-//   '/signin',
-//   celebrate({
-//     body: Joi.object().keys({
-//       email: Joi.string().required().email(),
-//       password: Joi.string().required().min(8),
-//     }),
-//   }),
-//   login,
-// );
-// app.post(
-//   '/signup',
-//   celebrate({
-//     body: Joi.object().keys({
-//       email: Joi.string().required().email(),
-//       password: Joi.string().required().min(8),
-//     }),
-//   }),
-//   createUser,
-// );
-// app.use('/', auth, users);
-// app.use('/', auth, cards);
-
-// app.get('*', () => {
-//   throw new NotFoundError('OOPS! page not found');
-// });
+app.get('*', () => {
+  throw new NotFoundError('OOPS! page not found');
+});
 
 // app.use(errorLogger);
 
-// // Centralized error handler
-// app.use(errorHandler);
+// Centralized error handler
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
