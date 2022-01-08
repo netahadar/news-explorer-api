@@ -38,7 +38,7 @@ module.exports.createUser = (req, res, next) => {
       if (!user) {
         throw new BadRequestError('Bad request');
       }
-      res.status(200).send({ message: 'user created successfully' });
+      res.status(201).send({ message: 'user created successfully' });
     })
     .catch((err) => {
       if (err.code === 11000) {

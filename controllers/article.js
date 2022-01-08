@@ -26,7 +26,7 @@ module.exports.saveArticle = (req, res, next) => {
       if (!savedArticle) {
         throw new BadRequestError('Bad request');
       }
-      res.status(200).send(savedArticle);
+      res.status(201).send(savedArticle);
     })
     .catch(next);
 };
