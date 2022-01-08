@@ -17,7 +17,7 @@ articles.post(
       date: Joi.string().required(),
       source: Joi.string().required(),
       link: Joi.string().required().custom(validateUrl),
-      Image: Joi.string().required().custom(validateUrl),
+      image: Joi.string().required().custom(validateUrl),
     }).unknown(true),
   }),
   saveArticle,
