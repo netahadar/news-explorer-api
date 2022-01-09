@@ -7,9 +7,6 @@ const auth = require('../middlewares/auth');
 const { login, createUser } = require('../controllers/user');
 const NotFoundError = require('../errors/notFoundError');
 
-index.use('/', auth, user);
-index.use('/', auth, articles);
-
 index.post(
   '/signin',
   celebrate({
@@ -31,6 +28,10 @@ index.post(
   }),
   createUser,
 );
+
+
+index.use('/', auth, user);
+index.use('/', auth, articles);
 
 index.get('*', () => {
   throw new NotFoundError('OOPS! page not found');
