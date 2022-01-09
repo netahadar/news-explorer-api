@@ -8,6 +8,7 @@ const { errorHandler } = require('./middlewares/errorHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { DB } = require('./utils/constants');
 const index = require('./routes/index');
+const { limiter } = require('./middlewares/rateLimiter');
 require('dotenv').config();
 
 const app = express();
@@ -23,6 +24,7 @@ mongoose.connect(
 );
 
 app.use(helmet());
+app.use(limiter);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
