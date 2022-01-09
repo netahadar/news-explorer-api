@@ -3,21 +3,29 @@ const helmet = require('helmet');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const { errors, celebrate, Joi } = require('celebrate');
-const article = require('./routes/article');
-const user = require('./routes/user');
-const { login, createUser } = require('./controllers/user');
-const auth = require('./middlewares/auth');
+const { errors } = require('celebrate');
+// const article = require('./routes/article');
+// const user = require('./routes/user');
+// const { login, createUser } = require('./controllers/user');
+// const auth = require('./middlewares/auth');
 const { errorHandler } = require('./middlewares/errorHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const NotFoundError = require('./errors/notFoundError');
+// const NotFoundError = require('./errors/notFoundError');
+const { DB } = require('./utils/constants');
+const index = require('./routes/index');
 require('dotenv').config();
 
 const app = express();
 
 const { PORT = 3000 } = process.env;
 
-mongoose.connect('mongodb://localhost:27017/newsExplorer');
+mongoose.connect(
+  DB,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  },
+);
 
 app.use(helmet());
 app.use(bodyParser.json());
@@ -30,32 +38,33 @@ app.use(requestLogger);
 // Celebrate error handler
 app.use(errors());
 
-app.post(
-  '/signin',
-  celebrate({
-    body: Joi.object().keys({
-      email: Joi.string().required().email(),
-      password: Joi.string().required().min(8),
-    }),
-  }),
-  login,
-);
-app.post(
-  '/signup',
-  celebrate({
-    body: Joi.object().keys({
-      email: Joi.string().required().email(),
-      password: Joi.string().required().min(8),
-    }),
-  }),
-  createUser,
-);
-app.use('/', auth, user);
-app.use('/', auth, article);
+app.use('/', index);
+// app.post(
+//   '/signin',
+//   celebrate({
+//     body: Joi.object().keys({
+//       email: Joi.string().required().email(),
+//       password: Joi.string().required().min(8),
+//     }),
+//   }),
+//   login,
+// );
+// app.post(
+//   '/signup',
+//   celebrate({
+//     body: Joi.object().keys({
+//       email: Joi.string().required().email(),
+//       password: Joi.string().required().min(8),
+//     }),
+//   }),
+//   createUser,
+// );
+// app.use('/', auth, user);
+// app.use('/', auth, article);
 
-app.get('*', () => {
-  throw new NotFoundError('OOPS! page not found');
-});
+// app.get('*', () => {
+//   throw new NotFoundError('OOPS! page not found');
+// });
 
 app.use(errorLogger);
 
