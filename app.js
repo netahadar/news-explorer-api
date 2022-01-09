@@ -4,13 +4,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const { errors } = require('celebrate');
-// const article = require('./routes/article');
-// const user = require('./routes/user');
-// const { login, createUser } = require('./controllers/user');
-// const auth = require('./middlewares/auth');
 const { errorHandler } = require('./middlewares/errorHandler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-// const NotFoundError = require('./errors/notFoundError');
 const { DB } = require('./utils/constants');
 const index = require('./routes/index');
 require('dotenv').config();
@@ -39,39 +34,10 @@ app.use(requestLogger);
 app.use(errors());
 
 app.use('/', index);
-// app.post(
-//   '/signin',
-//   celebrate({
-//     body: Joi.object().keys({
-//       email: Joi.string().required().email(),
-//       password: Joi.string().required().min(8),
-//     }),
-//   }),
-//   login,
-// );
-// app.post(
-//   '/signup',
-//   celebrate({
-//     body: Joi.object().keys({
-//       email: Joi.string().required().email(),
-//       password: Joi.string().required().min(8),
-//     }),
-//   }),
-//   createUser,
-// );
-// app.use('/', auth, user);
-// app.use('/', auth, article);
-
-// app.get('*', () => {
-//   throw new NotFoundError('OOPS! page not found');
-// });
 
 app.use(errorLogger);
 
 // Centralized error handler
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
-  console.log(`App listening at port ${PORT}`);
-});
+app.listen(PORT);

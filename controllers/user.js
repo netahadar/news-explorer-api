@@ -5,19 +5,30 @@ const BadRequestError = require('../errors/badRequestError');
 const NotFoundError = require('../errors/notFoundError');
 const UserExistsError = require('../errors/userExistsError');
 const UnauthorizedError = require('../errors/unauthorizedError');
+const {
+  userNotFound,
+  successCode,
+  badRequestMessage,
+  userCreated,
+  userExists,
+  createdCode,
+  salt,
+  unauthorizedCode,
+  incorrectCredentials,
+} = require('../utils/constants');
 
 // Get user data by Id
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.user._id)
     .then((chosenUser) => {
       if (!chosenUser) {
-        throw new NotFoundError('No user with matching id found');
+        throw new NotFoundError(userNotFound);
       }
-      return res.status(200).send(chosenUser);
+      return res.status(successCode).send(chosenUser);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        throw new BadRequestError('Bad request');
+        throw new BadRequestError(badRequestMessage);
       }
       next(err);
     })
@@ -36,13 +47,13 @@ module.exports.createUser = (req, res, next) => {
     }))
     .then((user) => {
       if (!user) {
-        throw new BadRequestError('Bad request');
+        throw new BadRequestError(badRequestMessage);
       }
-      res.status(201).send({ message: 'user created successfully' });
+      res.status(createdCode).send({ message: userCreated });
     })
     .catch((err) => {
       if (err.code === 11000) {
-        throw new UserExistsError('User is already exists');
+        throw new UserExistsError(userExists);
       }
       next(err);
     })
@@ -58,20 +69,15 @@ module.exports.login = (req, res, next) => {
   })
     .then((user) => {
       if (!user) {
-        throw new BadRequestError('Bad request');
+        throw new BadRequestError(badRequestMessage);
       }
-      const { NODE_ENV, JWT_SECRET } = process.env;
-      const token = jwt.sign(
-        { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
-        { expiresIn: '7d' },
-      );
-      res.status(200);
+      const token = jwt.sign({ _id: user._id }, salt, { expiresIn: '7d' });
+      res.status(successCode);
       res.json({ token });
     })
     .catch((err) => {
-      if (err.cose === 401) {
-        throw new UnauthorizedError('Incorrect email or password');
+      if (err.cose === unauthorizedCode) {
+        throw new UnauthorizedError(incorrectCredentials);
       }
       next(err);
     })

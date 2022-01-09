@@ -1,15 +1,24 @@
 const Article = require('../models/article');
 const NotFoundError = require('../errors/notFoundError');
 const BadRequestError = require('../errors/badRequestError');
+const {
+  successCode,
+  createdCode,
+  forbiddenCode,
+  badRequestMessage,
+  articleNotFound,
+  articleDeleted,
+  forbiddenText,
+} = require('../utils/constants');
 
 // Get all articles
 module.exports.getAllArticles = (req, res, next) => {
   Article.find({})
     .then((articles) => {
       if (!articles) {
-        throw new NotFoundError('No articles to display');
+        throw new NotFoundError(articleNotFound);
       }
-      res.status(200).send(articles);
+      res.status(successCode).send(articles);
     })
     .catch(next);
 };
@@ -17,16 +26,30 @@ module.exports.getAllArticles = (req, res, next) => {
 // Save an article to user's personal page
 module.exports.saveArticle = (req, res, next) => {
   const {
-    keyword, title, text, date, source, link, image, owner = req.user._id,
+    keyword,
+    title,
+    text,
+    date,
+    source,
+    link,
+    image,
+    owner = req.user._id,
   } = req.body;
   Article.create({
-    keyword, title, text, date, source, link, image, owner,
+    keyword,
+    title,
+    text,
+    date,
+    source,
+    link,
+    image,
+    owner,
   })
     .then((savedArticle) => {
       if (!savedArticle) {
-        throw new BadRequestError('Bad request');
+        throw new BadRequestError(badRequestMessage);
       }
-      res.status(201).send(savedArticle);
+      res.status(createdCode).send(savedArticle);
     })
     .catch(next);
 };
@@ -34,26 +57,26 @@ module.exports.saveArticle = (req, res, next) => {
 // Delete article
 module.exports.deleteArticle = (req, res, next) => {
   const { articleId } = req.params;
-  Article.findById(articleId).select('+owner')
+  Article.findById(articleId)
+    .select('+owner')
     .then((chosenArticle) => {
       if (!chosenArticle) {
-        throw new NotFoundError('No article with matching id found');
+        throw new NotFoundError(articleNotFound);
       }
       if (!chosenArticle.owner._id.equals(req.user._id)) {
-        throw new Error('Access to the requested resource is forbidden');
+        throw new Error(forbiddenText);
       }
-      Article.deleteOne({ _id: articleId })
-        .then(() => {
-          res.status(200);
-          res.json({ message: 'article has been deleted successfully' });
-        });
+      Article.deleteOne({ _id: articleId }).then(() => {
+        res.status(successCode);
+        res.json({ message: articleDeleted });
+      });
     })
     .catch((err) => {
       if (err.name === 'Error') {
-        res.status(403).send({ message: `${err.message}` });
+        res.status(forbiddenCode).send({ message: `${err.message}` });
       }
       if (err.name === 'CastError') {
-        throw new BadRequestError('Bad request');
+        throw new BadRequestError(badRequestMessage);
       }
       next(err);
     })

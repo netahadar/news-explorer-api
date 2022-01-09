@@ -9,6 +9,7 @@ const NotFoundError = require('../errors/notFoundError');
 
 index.use('/', auth, user);
 index.use('/', auth, articles);
+
 index.post(
   '/signin',
   celebrate({
@@ -19,6 +20,7 @@ index.post(
   }),
   login,
 );
+
 index.post(
   '/signup',
   celebrate({
@@ -29,6 +31,7 @@ index.post(
   }),
   createUser,
 );
+
 index.get('*', () => {
   throw new NotFoundError('OOPS! page not found');
 });

@@ -26,8 +26,7 @@ const articleSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator(v) {
-        // eslint-disable-next-line no-useless-escape
-        return /(http:\/\/|https:\/\/)[www\.]?[a-zA-z0-9.]+\/?#?/i.test(v);
+        return /(http:\/\/|https:\/\/)[www.]?[a-zA-z0-9.]+\/?#?/i.test(v);
       },
     },
   },
@@ -36,8 +35,7 @@ const articleSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator(v) {
-        // eslint-disable-next-line no-useless-escape
-        return /(http:\/\/|https:\/\/)[www\.]?[a-zA-z0-9.]+\/?#?/i.test(v);
+        return /(http:\/\/|https:\/\/)[www.]?[a-zA-z0-9.]+\/?#?/i.test(v);
       },
     },
   },
