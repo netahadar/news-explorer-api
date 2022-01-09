@@ -29,7 +29,6 @@ index.post(
   createUser,
 );
 
-
 index.use('/', auth, user);
 index.use('/', auth, articles);
 
