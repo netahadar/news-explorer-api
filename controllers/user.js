@@ -37,13 +37,14 @@ module.exports.getUserById = (req, res, next) => {
 
 // Create a new user
 module.exports.createUser = (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password, name } = req.body;
   bcrypt
     .hash(password, 12)
     // eslint-disable-next-line no-shadow
     .then((password) => User.create({
       email,
       password,
+      name,
     }))
     .then((user) => {
       if (!user) {
