@@ -24,13 +24,13 @@ mongoose.connect(
 );
 
 app.use(helmet());
-app.use(limiter);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.options('*', cors());
 
 app.use(requestLogger);
+app.use(limiter);
 
 // Celebrate error handler
 app.use(errors());
