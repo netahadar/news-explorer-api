@@ -51,6 +51,12 @@ module.exports.saveArticle = (req, res, next) => {
       }
       res.status(createdCode).send(savedArticle);
     })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        throw new BadRequestError(badRequestMessage);
+      }
+      next(err);
+    })
     .catch(next);
 };
 

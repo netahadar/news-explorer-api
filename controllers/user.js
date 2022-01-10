@@ -13,7 +13,6 @@ const {
   userExists,
   createdCode,
   salt,
-  unauthorizedCode,
   incorrectCredentials,
 } = require('../utils/constants');
 
@@ -80,7 +79,7 @@ module.exports.login = (req, res, next) => {
       res.json({ token });
     })
     .catch((err) => {
-      if (err.code === unauthorizedCode) {
+      if (err.name === 'Error') {
         throw new UnauthorizedError(incorrectCredentials);
       }
       if (err.name === 'ValidationError') {
