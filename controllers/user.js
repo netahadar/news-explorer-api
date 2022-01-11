@@ -55,9 +55,6 @@ module.exports.createUser = (req, res, next) => {
       if (err.code === 11000) {
         throw new UserExistsError(userExists);
       }
-      if (err.name === 'ValidationError') {
-        throw new BadRequestError(badRequestMessage);
-      }
       next(err);
     })
     .catch(next);
@@ -81,9 +78,6 @@ module.exports.login = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'Error') {
         throw new UnauthorizedError(incorrectCredentials);
-      }
-      if (err.name === 'ValidationError') {
-        throw new BadRequestError(badRequestMessage);
       }
       next(err);
     })
