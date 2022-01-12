@@ -33,7 +33,9 @@ app.use(requestLogger);
 app.use(limiter);
 
 // Celebrate error handler
-app.use(errors());
+app.use(errors({
+  statusCode: 400
+}));
 
 app.use('/', index);
 
