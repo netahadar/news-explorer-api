@@ -34,7 +34,7 @@ app.use(limiter);
 
 // Celebrate error handler
 app.use(errors({
-  statusCode: 400
+  statusCode: 400,
 }));
 
 app.use('/', index);
