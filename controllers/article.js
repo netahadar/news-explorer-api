@@ -13,7 +13,7 @@ const {
 
 // Get all articles
 module.exports.getAllArticles = (req, res, next) => {
-  Article.find({})
+  Article.find({ owner: req.user._id })
     .then((articles) => {
       if (!articles) {
         throw new NotFoundError(articleNotFound);
